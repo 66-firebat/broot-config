@@ -1,0 +1,126 @@
+###############################################################
+# Graphite Ember
+# A broot skin for a dark terminal.
+#
+# Palette: grayscale on graphite, with a single warm accent
+#   canvas      #2b2b2b  rgb(43,43,43)     main background
+#   panel       #282828  rgb(40,40,40)     non focused panels
+#   bar         #333333  rgb(51,51,51)     status/input bars, chips
+#   selected    #3a3a3a  rgb(58,58,58)     selected line
+#   preview     #262626  rgb(38,38,38)     preview area
+#
+#   text        #d3d3d3  rgb(211,211,211)  main foreground
+#   secondary   #888888  rgb(136,136,136)  dates, permissions, meta info
+#   muted       #626262  rgb(98,98,98)     tree lines, faint bits
+#   bright      #e8e8e8  rgb(232,232,232)  emphasis text
+#
+#   accent      #ff4400  rgb(255,68,0)     directories, matches,
+#                                          git info, status codes
+#   accent soft #ff8559  rgb(255,133,89)   executables, non-ascii
+#
+# Each entry: foreground background [attributes]  for the focused
+# panel, optionally followed by "/ ..." for non focused panels.
+# Doc: https://dystroy.org/broot/skins/
+###############################################################
+
+skin: {
+
+    default: rgb(211,211,211) rgb(43,43,43) / rgb(150,150,150) rgb(40,40,40)
+    tree: rgb(98,98,98) rgb(43,43,43) / rgb(84,84,84) rgb(40,40,40)
+    parent: rgb(150,150,150) rgb(43,43,43) / rgb(122,122,122) rgb(40,40,40)
+    file: rgb(211,211,211) rgb(43,43,43) / rgb(150,150,150) rgb(40,40,40)
+    directory: rgb(255,68,0) rgb(43,43,43) bold / rgb(255,68,0) rgb(40,40,40)
+    exe: rgb(255,133,89) rgb(43,43,43) / rgb(198,102,70) rgb(40,40,40)
+    link: rgb(168,168,168) rgb(43,43,43) underlined / rgb(130,130,130) rgb(40,40,40)
+    pruning: rgb(98,98,98) rgb(43,43,43) italic / rgb(84,84,84) rgb(40,40,40)
+
+    perm__: rgb(84,84,84) rgb(43,43,43)
+    perm_r: rgb(155,155,155) rgb(43,43,43)
+    perm_w: rgb(190,190,190) rgb(43,43,43)
+    perm_x: rgb(255,68,0) rgb(43,43,43)
+    owner: rgb(136,136,136) rgb(43,43,43)
+    group: rgb(122,122,122) rgb(43,43,43)
+    count: rgb(155,155,155) rgb(51,51,51)
+    dates: rgb(136,136,136) rgb(43,43,43)
+    sparse: rgb(185,185,185) rgb(43,43,43)
+    device_id_major: rgb(155,155,155) rgb(43,43,43)
+    device_id_sep: rgb(106,106,106) rgb(43,43,43)
+    device_id_minor: rgb(136,136,136) rgb(43,43,43)
+
+    content_extract: rgb(136,136,136) rgb(43,43,43)
+    content_match: rgb(43,43,43) rgb(255,68,0) bold
+
+    git_branch: rgb(255,68,0) rgb(43,43,43)
+    git_insertions: rgb(185,185,185) rgb(43,43,43)
+    git_deletions: rgb(255,68,0) rgb(43,43,43)
+    git_status_current: rgb(90,90,90) rgb(43,43,43)
+    git_status_modified: rgb(190,190,190) rgb(43,43,43)
+    git_status_new: rgb(255,68,0) rgb(43,43,43)
+    git_status_ignored: rgb(84,84,84) rgb(43,43,43)
+    git_status_conflicted: rgb(43,43,43) rgb(255,68,0) bold
+    git_status_other: rgb(150,150,150) rgb(43,43,43)
+
+    selected_line: none rgb(43,43,43) / none rgb(40,40,40)
+    char_match: rgb(255,68,0) rgb(43,43,43)
+    file_error: rgb(255,68,0) rgb(43,43,43) bold
+
+    flag_label: rgb(255,68,0) rgb(43,43,43)
+    flag_value: rgb(255,68,0) rgb(43,43,43) bold
+    input: rgb(240,240,240) rgb(43,43,43) / rgb(170,170,170) rgb(43,43,43)
+
+    status_error: rgb(43,43,43) rgb(255,68,0) bold
+    status_job: rgb(200,200,200) rgb(51,51,51)
+    status_normal: rgb(163,163,163) rgb(51,51,51) / rgb(110,110,110) rgb(51,51,51)
+    status_italic: rgb(190,190,190) rgb(51,51,51) italic / rgb(110,110,110) rgb(51,51,51)
+    status_bold: rgb(232,232,232) rgb(51,51,51) bold / rgb(110,110,110) rgb(51,51,51)
+    status_code: rgb(255,68,0) rgb(51,51,51) bold / rgb(170,170,170) rgb(51,51,51)
+    status_ellipsis: rgb(98,98,98) rgb(51,51,51) / rgb(84,84,84) rgb(51,51,51)
+
+    purpose_normal: rgb(163,163,163) rgb(43,43,43)
+    purpose_italic: rgb(190,190,190) rgb(43,43,43) italic
+    purpose_bold: rgb(232,232,232) rgb(43,43,43) bold
+    purpose_ellipsis: rgb(98,98,98) rgb(43,43,43)
+
+    scrollbar_track: rgb(43,43,43) rgb(43,43,43) / rgb(43,43,43) rgb(43,43,43)
+    scrollbar_thumb: rgb(255,68,0) rgb(43,43,43) / rgb(255,68,0) rgb(43,43,43)
+
+    help_paragraph: rgb(190,190,190) rgb(43,43,43)
+    help_bold: rgb(240,240,240) rgb(43,43,43) bold
+    help_italic: rgb(168,168,168) rgb(43,43,43) italic
+    help_code: rgb(240,240,240) rgb(51,51,51)
+    help_headers: rgb(255,68,0) rgb(43,43,43) bold
+    help_table_border: rgb(84,84,84) rgb(43,43,43)
+
+    preview: rgb(200,200,200) rgb(38,38,38) / rgb(150,150,150) rgb(38,38,38)
+    preview_title: rgb(176,176,176) rgb(38,38,38) / rgb(136,136,136) rgb(38,38,38)
+    preview_line_number: rgb(98,98,98) rgb(38,38,38)
+    preview_separator: rgb(63,63,63) rgb(43,43,43) / rgb(58,58,58) rgb(40,40,40)
+    preview_match: rgb(255,68,0) rgb(54,54,54) bold
+
+    hex_null: rgb(105,105,105) rgb(38,38,38)
+    hex_ascii_graphic: rgb(201,201,201) rgb(38,38,38)
+    hex_ascii_whitespace: rgb(150,150,150) rgb(38,38,38)
+    hex_ascii_other: rgb(184,184,184) rgb(38,38,38)
+    hex_non_ascii: rgb(255,133,89) rgb(38,38,38)
+
+    staging_area_title: rgb(190,190,190) rgb(46,46,46) / rgb(150,150,150) rgb(46,46,46)
+    mode_command_mark: rgb(43,43,43) rgb(255,68,0) bold
+
+    good_to_bad_0: rgb(224,224,224)
+    good_to_bad_1: rgb(203,203,203)
+    good_to_bad_2: rgb(182,182,182)
+    good_to_bad_3: rgb(159,159,159)
+    good_to_bad_4: rgb(136,136,136)
+    good_to_bad_5: rgb(255,153,102)
+    good_to_bad_6: rgb(255,122,51)
+    good_to_bad_7: rgb(255,94,26)
+    good_to_bad_8: rgb(255,76,8)
+    good_to_bad_9: rgb(255,68,0)
+}
+
+###############################################################
+# Syntax highlighting for file previews.
+# EightiesDark is the bundled syntect theme closest to the
+# grayscale + orange palette used here.
+###############################################################
+syntax_theme: EightiesDark
