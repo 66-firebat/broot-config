@@ -9,6 +9,16 @@
 
 verbs: [
 
+    # Float the selected file as an always-on-top window via DMS' Floaty plugin.
+    # `external` is an argv array so paths with spaces survive; {file} is the
+    # absolute path, so "file://{file}" becomes file:///abs/path.
+    {
+        invocation: floaty
+        key: ctrl-f
+        external: [ "dms", "ipc", "call", "floaty", "floatFromUrl", "file://{file}" ]
+        leave_broot: false
+    }
+
     # You should customize this standard opening of text files.
     # If you edit text files in your terminal (vi, emacs, helix, eg.), then
     #  you'll find it convenient to change the 'key' from 'ctrl-e' to 'enter'.
