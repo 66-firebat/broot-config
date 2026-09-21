@@ -183,6 +183,16 @@ verbs: [
     #     key: ctrl-j
     #     execution: ":line_down"
     # }
+
+    # Vim-style navigation: ctrl-n moves down, ctrl-p moves up
+    {
+        key: ctrl-n
+        internal: line_down
+    }
+    {
+        key: ctrl-p
+        internal: line_up
+    }
     # {
     #     key: ctrl-u
     #     execution: ":page_up"
