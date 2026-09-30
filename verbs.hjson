@@ -184,15 +184,6 @@ verbs: [
     #     execution: ":line_down"
     # }
 
-    # Vim-style navigation: ctrl-n moves down, ctrl-p moves up
-    {
-        key: ctrl-n
-        internal: line_down
-    }
-    {
-        key: ctrl-p
-        internal: line_up
-    }
     # {
     #     key: ctrl-u
     #     execution: ":page_up"
@@ -221,4 +212,18 @@ verbs: [
     #     external: "mv {file} {other-panel-directory}"
     #     leave_broot: false
     # }
+
+    # Modal mode: enter input mode with 's' instead of the default '/'.
+    # Broot's built-in modal bindings (space, ':', '/') are hard-coded, so the
+    # default '/' is unbound first, then 's' is bound to the same internal.
+    # A verb with only a `key` and no execution is how a key is unbound.
+    # Note: `mode: command` isn't a real verb attribute in broot 1.60.1, and
+    # single-character keys are automatically restricted to command mode.
+    {
+        key: "/"
+    }
+    {
+        key: s
+        internal: ":mode_input"
+    }
 ]

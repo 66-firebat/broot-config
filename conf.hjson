@@ -53,8 +53,8 @@ default_flags: "gs"
 #
 # You may start either in 'command' mode, or in 'input' mode
 #
-# modal: true
-# initial_mode: command
+modal: true
+initial_mode: command
 
 ###############################################################
 # Whether to mark the selected line with a triangle
@@ -185,7 +185,7 @@ content_search_max_file_size: 10MB
 #
 # Change this if you sometimes want to have more than 2 panels
 # open
-# max_panels_count: 2
+max_panels_count: 2
 
 ###############################################################
 # Update work dir
