@@ -230,29 +230,55 @@ verbs: [
     # ------------------------------------------------------------------
     # Custom keymap (user verbs are matched before broot's builtins).
     # ------------------------------------------------------------------
-    # Move the staging toggle from ctrl-g to ctrl-p: a verb with only a
+    # Move the staging toggle off ctrl-g: a verb with only a
     # `key` and no execution unbinds that key everywhere.
     {
         key: ctrl-g
     }
-    # ctrl-p stages/unstages the selection.
-    # NOTE: broot's builtin `:start_end_panel` also uses ctrl-p; this shadows
-    # it (press it and you'll stage instead of opening/closing a panel). Bind
-    # :start_end_panel to another key below if you still want it on a key.
+    # ctrl-s stages/unstages the selection.
+    # NOTE: broot's builtin `:search_again` (total search) uses ctrl-s; this
+    # shadows it. Bind :search_again to another key if you still want it.
     {
-        key: ctrl-p
+        key: ctrl-s
         internal: toggle_stage
     }
-    # ctrl-l opens the staging panel if it isn't already open.
-    # (Already open -> open_staging_area is a no-op; switch to
-    # `focus_staging_area_no_open` if you'd rather it jumps to the panel.)
+    # ctrl-p opens (or closes) a second file-tree panel: a conventional
+    # tree panel, never a preview.
+    {
+        key: ctrl-p
+        internal: toggle_second_tree
+    }
+    # ctrl-l is the same as ctrl-right / alt-right (`:panel_right`):
+    # focus the panel on the right, or open one there.
     {
         key: ctrl-l
-        internal: open_staging_area
+        internal: panel_right
     }
-    # ctrl-h moves focus to the left panel (same as ctrl-left).
+    # ctrl-h is `:panel_left`: focus the panel on the left, or open one
+    # there (mirror of ctrl-l / ctrl-right).
     {
         key: ctrl-h
-        internal: panel_left_no_open
+        internal: panel_left
+    }
+
+    # ------------------------------------------------------------------
+    # Interactive zoxide jump: `z` opens zoxide's fzf picker and then tells
+    # *this running* broot instance to focus the chosen dir.
+    # `z` is a single-character key, so broot automatically makes it
+    # command-mode-only (it's inactive while typing in input mode).
+    # Works through broot's client-server mode: `--listen-auto` in
+    # conf.hjson's default_flags gives each instance a random socket name,
+    # which `{server-name}` expands to here. No relaunch, so broot's
+    # navigation history and panels are preserved.
+    # ------------------------------------------------------------------
+    {
+        invocation: "zi"
+        key: z
+        external: [
+            "sh"
+            "-c"
+            "p=$(zoxide query -i) || exit 0; [ -n \"$p\" ] && broot --send {server-name} \"$p\"; exit 0"
+        ]
+        leave_broot: false
     }
 ]
