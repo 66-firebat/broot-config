@@ -283,4 +283,27 @@ verbs: [
         ]
         leave_broot: false
     }
+
+    # ------------------------------------------------------------------
+    # Cross-instance copy (`bcopy`, alt-b): copy the current selection into
+    # the *other* running broot instance's root. Both instances listen
+    # (--listen-auto in default_flags), so we discover the other one by
+    # scanning /tmp/broot-server-*.sock, ask its root with
+    # `broot --send <name> --get-root`, and copy there.
+    # Limits: the destination is the other instance's ROOT (broot exposes no
+    # way to read another instance's cursor); with more than two instances,
+    # the first other one that answers wins. No-op if there's no other.
+    # ------------------------------------------------------------------
+    {
+        invocation: "bcopy"
+        key: alt-b
+        external: [
+            "sh"
+            "-c"
+            "me={server-name}; dest=; for s in $(ls /tmp/broot-server-*.sock 2>/dev/null); do n=$(basename \"$s\" .sock | sed 's/^broot-server-//'); [ \"$n\" = \"$me\" ] && continue; d=$(broot --send \"$n\" --get-root 2>/dev/null) || continue; if [ -n \"$d\" ]; then dest=\"$d\"; break; fi; done; if [ -n \"$dest\" ]; then cp -r -- \"$1\" \"$dest\"; fi; exit 0"
+            "sh"
+            "{file}"
+        ]
+        leave_broot: false
+    }
 ]
