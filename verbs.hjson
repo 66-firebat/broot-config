@@ -226,4 +226,33 @@ verbs: [
         key: s
         internal: ":mode_input"
     }
+
+    # ------------------------------------------------------------------
+    # Custom keymap (user verbs are matched before broot's builtins).
+    # ------------------------------------------------------------------
+    # Move the staging toggle from ctrl-g to ctrl-p: a verb with only a
+    # `key` and no execution unbinds that key everywhere.
+    {
+        key: ctrl-g
+    }
+    # ctrl-p stages/unstages the selection.
+    # NOTE: broot's builtin `:start_end_panel` also uses ctrl-p; this shadows
+    # it (press it and you'll stage instead of opening/closing a panel). Bind
+    # :start_end_panel to another key below if you still want it on a key.
+    {
+        key: ctrl-p
+        internal: toggle_stage
+    }
+    # ctrl-l opens the staging panel if it isn't already open.
+    # (Already open -> open_staging_area is a no-op; switch to
+    # `focus_staging_area_no_open` if you'd rather it jumps to the panel.)
+    {
+        key: ctrl-l
+        internal: open_staging_area
+    }
+    # ctrl-h moves focus to the left panel (same as ctrl-left).
+    {
+        key: ctrl-h
+        internal: panel_left_no_open
+    }
 ]
