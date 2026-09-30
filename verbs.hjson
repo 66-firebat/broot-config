@@ -93,14 +93,13 @@ verbs: [
         execution: "git difftool -y {file}"
     }
 
-    # On ctrl-b, propose the creation of a copy of the selection.
-    # While this might occasionally be useful, this verb is mostly here
-    # as an example to demonstrate rare standard groups like {file-stem}
-    # and {file-dot-extension} and the auto_exec verb property which
-    # allows verbs to stay unexecuted until you hit enter
+    # Propose the creation of a copy of the selection (`:backup {version}`).
+    # This verb demonstrates rare standard groups like {file-stem} and
+    # {file-dot-extension} and the auto_exec property, which allows a verb to
+    # stay unexecuted until you hit enter. It used to be bound to ctrl-b, but
+    # that key now belongs to bcopy (below).
     {
         invocation: "backup {version}"
-        key: ctrl-b
         leave_broot: false
         auto_exec: false
         execution: "cp -r {file} {parent}/{file-stem}-{version}{file-dot-extension}"
@@ -285,24 +284,36 @@ verbs: [
     }
 
     # ------------------------------------------------------------------
-    # Cross-instance copy (`bcopy`, alt-b): copy the current selection into
-    # the *other* running broot instance's root. Both instances listen
-    # (--listen-auto in default_flags), so we discover the other one by
-    # scanning /tmp/broot-server-*.sock, ask its root with
-    # `broot --send <name> --get-root`, and copy there.
-    # Limits: the destination is the other instance's ROOT (broot exposes no
-    # way to read another instance's cursor); with more than two instances,
-    # the first other one that answers wins. No-op if there's no other.
+    # Cross-instance copy (`bcopy`, ctrl-b). One command, smart selection:
+    #  - no files staged: the rightmost panel is the panel you're in, so it
+    #    copies the current selection (1 file);
+    #  - files staged: the staging area is the rightmost panel, so it copies
+    #    ALL staged files at once.
+    # `{file:space-separated}` keeps it a single invocation: one fzf prompt,
+    # one copy, one refresh, with every selection passed as its own argument.
+    # Every instance listens (--listen-auto in default_flags), so we discover
+    # the others by scanning /tmp/broot-server-*.sock and asking each for its
+    # root with `broot --send <name> --get-root`.
+    # The "name<TAB>root" candidates are piped to fzf: with several instances
+    # you pick one, with a single instance fzf --select-1 picks it silently,
+    # and with none (or if you cancel fzf) it's a no-op.
+    # Notes:
+    #  - `impacted_panel` is only honored for key-triggered verbs, so use the
+    #    key (typing `:bcopy` acts on the active panel instead);
+    #  - with two tree panels and nothing staged, it acts on the right one;
+    #  - the destination is another instance's ROOT (broot exposes no way to
+    #    read another instance's cursor).
     # ------------------------------------------------------------------
     {
         invocation: "bcopy"
-        key: alt-b
+        key: ctrl-b
+        impacted_panel: right
         external: [
             "sh"
             "-c"
-            "me={server-name}; dest=; for s in $(ls /tmp/broot-server-*.sock 2>/dev/null); do n=$(basename \"$s\" .sock | sed 's/^broot-server-//'); [ \"$n\" = \"$me\" ] && continue; d=$(broot --send \"$n\" --get-root 2>/dev/null) || continue; if [ -n \"$d\" ]; then dest=\"$d\"; break; fi; done; if [ -n \"$dest\" ]; then cp -r -- \"$1\" \"$dest\"; fi; exit 0"
+            "cf=/tmp/broot-bcopy-$$.lst; : > \"$cf\"; for s in $(ls /tmp/broot-server-*.sock 2>/dev/null); do n=$(basename \"$s\" .sock | sed 's/^broot-server-//'); [ \"$n\" = \"{server-name}\" ] && continue; d=$(broot --send \"$n\" --get-root 2>/dev/null) || continue; [ -n \"$d\" ] && printf '%s\\t%s\\n' \"$n\" \"$d\" >> \"$cf\"; done; choice=$(fzf --select-1 --exit-0 --delimiter='\\t' --with-nth='1,2' --prompt='send to broot: ' < \"$cf\"); rm -f \"$cf\"; if [ -n \"$choice\" ]; then dn=$(printf '%s' \"$choice\" | cut -f1); dest=$(printf '%s' \"$choice\" | cut -f2); if [ -n \"$dest\" ] && [ \"$#\" -gt 0 ] && cp -r -- \"$@\" \"$dest\"; then broot --send \"$dn\" -c ':refresh'; fi; fi; exit 0"
             "sh"
-            "{file}"
+            "{file:space-separated}"
         ]
         leave_broot: false
     }
