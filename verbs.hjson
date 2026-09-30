@@ -248,11 +248,13 @@ verbs: [
         key: ctrl-p
         internal: toggle_second_tree
     }
-    # ctrl-l is the same as ctrl-right / alt-right (`:panel_right`):
-    # focus the panel on the right, or open one there.
+    # ctrl-l cycles the focus to the next panel on the right, wrapping
+    # around. Unlike :panel_right it never opens nor closes a panel, so it
+    # can't accidentally close one when you're already on the rightmost.
+    # (Open panels with ctrl-p / :toggle_second_tree.)
     {
         key: ctrl-l
-        internal: panel_right
+        internal: focus_panel_right
     }
     # ctrl-h is `:panel_left`: focus the panel on the left, or open one
     # there (mirror of ctrl-l / ctrl-right).
