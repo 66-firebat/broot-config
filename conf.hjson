@@ -188,6 +188,18 @@ content_search_max_file_size: 10MB
 max_panels_count: 2
 
 ###############################################################
+# Layout
+#
+# Make the second panel (the staging area, toggled with ctrl-p) take
+# as much width as possible. Broot keeps a minimal 8-column width for
+# the other panel, so the staging area gets everything except that
+# sliver. (See the "Resize panels" section of the broot docs.)
+#
+layout_instructions: [
+    { panel: 1, width: 999 }
+]
+
+###############################################################
 # Update work dir
 #
 # By default, broot process' work dir is kept in sync with the

@@ -241,11 +241,12 @@ verbs: [
         key: ctrl-s
         internal: toggle_stage
     }
-    # ctrl-p opens (or closes) a second file-tree panel: a conventional
-    # tree panel, never a preview.
+    # ctrl-p toggles the staging area panel (open/close).
+    # A layout_instructions entry in conf.hjson makes that panel take nearly
+    # the whole terminal width when it's open.
     {
         key: ctrl-p
-        internal: toggle_second_tree
+        internal: toggle_staging_area
     }
     # ctrl-l cycles the focus to the next panel on the right, wrapping
     # around. Unlike :panel_right it never opens nor closes a panel, so it
