@@ -188,6 +188,14 @@ content_search_max_file_size: 10MB
 max_panels_count: 2
 
 ###############################################################
+# Staging area
+#
+# Don't open the staging area automatically when staging a file
+# (ctrl-s just stages/unstages). Toggle the panel yourself with ctrl-p.
+#
+auto_open_staging_area: false
+
+###############################################################
 # Layout
 #
 # Make the second panel (the staging area, toggled with ctrl-p) take
