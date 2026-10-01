@@ -305,6 +305,8 @@ verbs: [
     # The "name<TAB>root" candidates are piped to fzf: with several instances
     # you pick one, with a single instance fzf --select-1 picks it silently,
     # and with none (or if you cancel fzf) it's a no-op.
+    # fzf only DISPLAYS the root (--with-nth='2'), but it still emits the
+    # original "name<TAB>root" line, so the name is parsed from field 1.
     # Notes:
     #  - the destination is another instance's ROOT (broot exposes no way to
     #    read another instance's cursor).
@@ -315,7 +317,7 @@ verbs: [
         external: [
             "sh"
             "-c"
-            "cf=/tmp/broot-bcopy-$$.lst; : > \"$cf\"; for s in $(ls /tmp/broot-server-*.sock 2>/dev/null); do n=$(basename \"$s\" .sock | sed 's/^broot-server-//'); [ \"$n\" = \"{server-name}\" ] && continue; d=$(broot --send \"$n\" --get-root 2>/dev/null) || continue; [ -n \"$d\" ] && printf '%s\\t%s\\n' \"$n\" \"$d\" >> \"$cf\"; done; choice=$(fzf --select-1 --exit-0 --delimiter='\\t' --with-nth='1,2' --prompt='send to broot: ' < \"$cf\"); rm -f \"$cf\"; if [ -n \"$choice\" ]; then dn=$(printf '%s' \"$choice\" | cut -f1); dest=$(printf '%s' \"$choice\" | cut -f2); if [ -n \"$dest\" ] && [ \"$#\" -gt 0 ] && cp -r -- \"$@\" \"$dest\"; then broot --send \"$dn\" -c ':refresh'; fi; fi; exit 0"
+            "cf=/tmp/broot-bcopy-$$.lst; : > \"$cf\"; for s in $(ls /tmp/broot-server-*.sock 2>/dev/null); do n=$(basename \"$s\" .sock | sed 's/^broot-server-//'); [ \"$n\" = \"{server-name}\" ] && continue; d=$(broot --send \"$n\" --get-root 2>/dev/null) || continue; [ -n \"$d\" ] && printf '%s\\t%s\\n' \"$n\" \"$d\" >> \"$cf\"; done; choice=$(fzf --select-1 --exit-0 --delimiter='\\t' --with-nth='2' --prompt='send to broot: ' < \"$cf\"); rm -f \"$cf\"; if [ -n \"$choice\" ]; then dn=$(printf '%s' \"$choice\" | cut -f1); dest=$(printf '%s' \"$choice\" | cut -f2); if [ -n \"$dest\" ] && [ \"$#\" -gt 0 ] && cp -r -- \"$@\" \"$dest\"; then broot --send \"$dn\" -c ':refresh'; fi; fi; exit 0"
             "sh"
             "{file:space-separated}"
         ]
