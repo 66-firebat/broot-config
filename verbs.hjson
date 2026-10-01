@@ -285,13 +285,20 @@ verbs: [
     }
 
     # ------------------------------------------------------------------
-    # Cross-instance copy (`bcopy`, ctrl-b). One command, smart selection:
-    #  - no files staged: the rightmost panel is the panel you're in, so it
-    #    copies the current selection (1 file);
-    #  - files staged: the staging area is the rightmost panel, so it copies
-    #    ALL staged files at once.
+    # Cross-instance copy (`bcopy`, ctrl-b). It copies the ACTIVE panel's
+    # selection(s) into another running broot instance's root:
+    #  - focus a tree: it copies the current selection (1 file);
+    #  - focus the staging area: it copies ALL staged files at once.
+    # It deliberately does NOT use `impacted_panel`. The only positional
+    # targets broot offers are active/left/right/preview, and a preview panel
+    # is always inserted at the far right, so `impacted_panel: right` would
+    # grab the previewed file instead of the staged files. Acting on the
+    # active panel is immune to preview placement. To send staged files,
+    # stage them (ctrl-s), focus the staging area (ctrl-l), then
+    # hit ctrl-b.
     # `{file:space-separated}` keeps it a single invocation: one fzf prompt,
-    # one copy, one refresh, with every selection passed as its own argument.
+    # one copy, one refresh, with every selection passed as its own argument
+    # (on the staging area it expands to one argv entry per staged file).
     # Every instance listens (--listen-auto in default_flags), so we discover
     # the others by scanning /tmp/broot-server-*.sock and asking each for its
     # root with `broot --send <name> --get-root`.
@@ -299,16 +306,12 @@ verbs: [
     # you pick one, with a single instance fzf --select-1 picks it silently,
     # and with none (or if you cancel fzf) it's a no-op.
     # Notes:
-    #  - `impacted_panel` is only honored for key-triggered verbs, so use the
-    #    key (typing `:bcopy` acts on the active panel instead);
-    #  - with two tree panels and nothing staged, it acts on the right one;
     #  - the destination is another instance's ROOT (broot exposes no way to
     #    read another instance's cursor).
     # ------------------------------------------------------------------
     {
         invocation: "bcopy"
         key: ctrl-b
-        impacted_panel: right
         external: [
             "sh"
             "-c"
