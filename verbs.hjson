@@ -307,6 +307,13 @@ verbs: [
     # and with none (or if you cancel fzf) it's a no-op.
     # fzf only DISPLAYS the root (--with-nth='2'), but it still emits the
     # original "name<TAB>root" line, so the name is parsed from field 1.
+    # switch_terminal: false keeps broot on its alternate screen around the
+    # external command instead of leaving/re-entering it, which is what made
+    # the SOURCE instance flash (the destination only gets a socket :refresh).
+    # Because broot stays on the alternate screen, fzf must not toggle it:
+    # `--height=99%` renders fzf inline (near full screen, one row short).
+    # `--height=100%` would count as fullscreen and re-enter the alternate
+    # screen, putting broot back on the normal screen after fzf exits.
     # Notes:
     #  - the destination is another instance's ROOT (broot exposes no way to
     #    read another instance's cursor).
@@ -317,10 +324,11 @@ verbs: [
         external: [
             "sh"
             "-c"
-            "cf=/tmp/broot-bcopy-$$.lst; : > \"$cf\"; for s in $(ls /tmp/broot-server-*.sock 2>/dev/null); do n=$(basename \"$s\" .sock | sed 's/^broot-server-//'); [ \"$n\" = \"{server-name}\" ] && continue; d=$(broot --send \"$n\" --get-root 2>/dev/null) || continue; [ -n \"$d\" ] && printf '%s\\t%s\\n' \"$n\" \"$d\" >> \"$cf\"; done; choice=$(fzf --select-1 --exit-0 --delimiter='\\t' --with-nth='2' --prompt='send to broot: ' < \"$cf\"); rm -f \"$cf\"; if [ -n \"$choice\" ]; then dn=$(printf '%s' \"$choice\" | cut -f1); dest=$(printf '%s' \"$choice\" | cut -f2); if [ -n \"$dest\" ] && [ \"$#\" -gt 0 ] && cp -r -- \"$@\" \"$dest\"; then broot --send \"$dn\" -c ':refresh'; fi; fi; exit 0"
+            "cf=/tmp/broot-bcopy-$$.lst; : > \"$cf\"; for s in $(ls /tmp/broot-server-*.sock 2>/dev/null); do n=$(basename \"$s\" .sock | sed 's/^broot-server-//'); [ \"$n\" = \"{server-name}\" ] && continue; d=$(broot --send \"$n\" --get-root 2>/dev/null) || continue; [ -n \"$d\" ] && printf '%s\\t%s\\n' \"$n\" \"$d\" >> \"$cf\"; done; choice=$(fzf --select-1 --exit-0 --height=99% --delimiter='\\t' --with-nth='2' --prompt='send to broot: ' < \"$cf\"); rm -f \"$cf\"; if [ -n \"$choice\" ]; then dn=$(printf '%s' \"$choice\" | cut -f1); dest=$(printf '%s' \"$choice\" | cut -f2); if [ -n \"$dest\" ] && [ \"$#\" -gt 0 ] && cp -r -- \"$@\" \"$dest\"; then broot --send \"$dn\" -c ':refresh'; fi; fi; exit 0"
             "sh"
             "{file:space-separated}"
         ]
         leave_broot: false
+        switch_terminal: false
     }
 ]
