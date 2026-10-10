@@ -341,4 +341,32 @@ verbs: [
         leave_broot: false
         switch_terminal: false
     }
+
+    # ------------------------------------------------------------------
+    # `adb-push {destination}` pushes the selected file to an Android
+    # device over adb. It isn't bound to any key: invoke it by typing the
+    # destination, e.g.
+    #   :adb-push /storage/4A21-0000/repositories/assets/pdf/books/
+    # The device is picked automatically when exactly one is connected;
+    # with several, a full-screen fzf picker lists the serials. Only
+    # serials in the `device` state are considered, so
+    # `offline`/`unauthorized` entries are ignored.
+    # Unlike bcopy this keeps broot's default terminal hand-off (no
+    # switch_terminal:false): adb prints progress and errors, and handing
+    # the terminal over keeps that readable and avoids drawing it over
+    # broot's alternate screen. Add switch_terminal:false here if you'd
+    # rather not have the screen switch at all.
+    # ------------------------------------------------------------------
+    {
+        invocation: "adb-push {destination}"
+        external: [
+            "sh"
+            "-c"
+            "file=${1:-}; dest=${2:-}; [ -n \"$file\" ] || { echo 'adb-push: no file selected' >&2; exit 1; }; [ -n \"$dest\" ] || { echo 'adb-push: no destination given (usage: :adb-push <remote-path>)' >&2; exit 1; }; devices=$(adb devices | awk 'NR>1 && $2 == \"device\" { print $1 }'); [ -n \"$devices\" ] || { echo 'adb-push: no adb device in state \"device\" found' >&2; exit 1; }; if [ \"$(printf '%s\\n' \"$devices\" | wc -l)\" -gt 1 ]; then serial=$(printf '%s\\n' \"$devices\" | fzf --prompt='adb device: ') || exit 0; else serial=$devices; fi; [ -n \"$serial\" ] || exit 0; exec adb -s \"$serial\" push \"$file\" \"$dest\""
+            "sh"
+            "{file}"
+            "{destination}"
+        ]
+        leave_broot: false
+    }
 ]
