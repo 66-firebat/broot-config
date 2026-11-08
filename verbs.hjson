@@ -19,6 +19,17 @@ verbs: [
         leave_broot: false
     }
 
+    # Emacs-style movement: Ctrl-n / Ctrl-p move the selection down / up.
+    # These simply trigger the built-in line_down / line_up internal verbs.
+    {
+        key: ctrl-n
+        execution: ":line_down"
+    }
+    {
+        key: ctrl-p
+        execution: ":line_up"
+    }
+
     # You should customize this standard opening of text files.
     # If you edit text files in your terminal (vi, emacs, helix, eg.), then
     #  you'll find it convenient to change the 'key' from 'ctrl-e' to 'enter'.
