@@ -9,14 +9,43 @@
 
 verbs: [
 
-    # Float the selected file as an always-on-top window via DMS' Floaty plugin.
-    # `external` is an argv array so paths with spaces survive; {file} is the
-    # absolute path, so "file://{file}" becomes file:///abs/path.
+    # Annotate the selected image with satty (`satty -f <image>`).
+    # `external` is an argv array so paths with spaces survive: {file} is the
+    # absolute path, passed as its own argument.
+    #
+    # Interaction (satty's built-in defaults, since ~/.config/satty/config.toml
+    # doesn't exist here): Enter copies the annotated result to the clipboard,
+    # Ctrl+S saves it, Esc quits. `--output-filename` gives Ctrl+S a target so
+    # it saves silently instead of opening a save-as dialog, and the strftime
+    # pattern keeps each save a new file; satty expands the leading `~` itself.
+    # `--resize smart` scales the window to 80% of the monitor at most, so a 4K
+    # image doesn't open a 4K window, and `--floating-hack` (Hyprland honours it:
+    # the window comes up floating) keeps the image off the tile layout.
+    #
+    # satty is a GTK4/Wayland app, so it needs no terminal: `switch_terminal:
+    # false` keeps broot on its alternate screen while satty runs, and broot
+    # (blocked on the external command) redraws as soon as satty exits.
+    #
+    # `extensions` only lets ctrl-f fire on formats satty can actually decode
+    # through gdk-pixbuf here (png/jpeg are built into gdk-pixbuf, svg comes
+    # from librsvg, webp from satty's own fallback decoder, plus the gif/bmp/
+    # tiff loaders). On anything else — a directory, a PDF, a source file —
+    # ctrl-f is simply a no-op rather than a broken launch. Add a second verb
+    # on ctrl-f with `extensions: ["pdf"]` if you want PDFs (render page 1 with
+    # mutool first, as conf.hjson's preview_transformer does).
     {
-        invocation: floaty
+        invocation: satty
         key: ctrl-f
-        external: [ "dms", "ipc", "call", "floaty", "floatFromUrl", "file://{file}" ]
+        external: [
+            "satty"
+            "--filename" "{file}"
+            "--resize" "smart"
+            "--floating-hack"
+            "--output-filename" "~/Pictures/Screenshots/satty-%Y-%m-%d_%H-%M-%S.png"
+        ]
         leave_broot: false
+        switch_terminal: false
+        extensions: [ "png", "jpg", "jpeg", "webp", "gif", "bmp", "tif", "tiff", "svg" ]
     }
 
     # Emacs-style movement: Ctrl-n / Ctrl-p move the selection down / up.
