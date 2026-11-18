@@ -9,51 +9,33 @@
 
 verbs: [
 
-    # Annotate the selected image with satty (`satty -f <image>`).
+    # Open the selected file with its default handler (`xdg-open <file>`).
     # `external` is an argv array so paths with spaces survive: {file} is the
     # absolute path, passed as its own argument.
     #
-    # Interaction (satty's built-in defaults, since ~/.config/satty/config.toml
-    # doesn't exist here): Enter copies the annotated result to the clipboard,
-    # Ctrl+S saves it, Esc quits. `--output-filename` gives Ctrl+S a target so
-    # it saves silently instead of opening a save-as dialog, and the strftime
-    # pattern keeps each save a new file; satty expands the leading `~` itself.
-    # `--resize smart` scales the window to 80% of the monitor at most, so a 4K
-    # image doesn't open a 4K window, and `--floating-hack` (Hyprland honours it:
-    # the window comes up floating) keeps the image off the tile layout.
-    #
-    # satty is a GTK4/Wayland app, so it needs no terminal: `setsid -f` detaches
-    # it (new session, so it survives broot quitting, and the wrapper returns at
-    # once) and broot stays interactive with the annotation window floating
-    # above it. That's why this goes through `sh -c` at all: an argv array can't
-    # redirect, and the detached child would otherwise keep broot's PTY as its
-    # stdout/stderr and scribble GTK warnings over the TUI *after* broot has
-    # redrawn. stdin is closed too, and `switch_terminal: false` keeps broot on
-    # its alternate screen instead of flashing out and back for the ~1ms the
-    # wrapper lives. Downside: satty failures are swallowed — copy the command
-    # below into a shell to debug one. {file} is passed as $1, not interpolated
-    # into the script, so spaces and quotes in paths are safe.
-    #
-    # `extensions` only lets ctrl-f fire on formats satty can actually decode
-    # through gdk-pixbuf here (png/jpeg are built into gdk-pixbuf, svg comes
-    # from librsvg, webp from satty's own fallback decoder, plus the gif/bmp/
-    # tiff loaders). On anything else — a directory, a PDF, a source file —
-    # ctrl-f is simply a no-op rather than a broken launch. Add a second verb
-    # on ctrl-f with `extensions: ["pdf"]` if you want PDFs (render page 1 with
-    # mutool first, as conf.hjson's preview_transformer does).
+    # `setsid -f` detaches it (new session, so it survives broot quitting, and
+    # the wrapper returns at once) so broot stays interactive. That's why this
+    # goes through `sh -c` at all: an argv array can't redirect, and the
+    # detached child would otherwise keep broot's PTY as its stdout/stderr and
+    # scribble over the TUI after broot redraws. stdin is closed too, and
+    # `switch_terminal: false` keeps broot on its alternate screen instead of
+    # flashing out and back for the ~1ms the wrapper lives. Downside: xdg-open
+    # failures are swallowed — copy the command below into a shell to debug one.
+    # {file} is passed as $1, not interpolated into the script, so spaces and
+    # quotes in paths are safe.
     {
-        invocation: satty
-        key: ctrl-f
+        invocation: open
+        key: ctrl-o
         external: [
             "sh"
             "-c"
-            "setsid -f satty --filename \"$1\" --resize smart --floating-hack --output-filename '~/Pictures/Screenshots/satty-%Y-%m-%d_%H-%M-%S.png' </dev/null >/dev/null 2>&1"
+            "setsid -f xdg-open \"$1\" </dev/null >/dev/null 2>&1"
             "sh"
             "{file}"
         ]
         leave_broot: false
         switch_terminal: false
-        extensions: [ "png", "jpg", "jpeg", "webp", "gif", "bmp", "tif", "tiff", "svg" ]
+        apply_to: file
     }
 
     # Emacs-style movement: Ctrl-n / Ctrl-p move the selection down / up.
