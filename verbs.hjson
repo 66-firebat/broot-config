@@ -72,11 +72,27 @@ verbs: [
         external: "emacsclient -n +{line} {file:space-separated}"
         leave_broot: true
     }
+    # Copy the complete path of the selection to the clipboard.
+    # `{file}` is the absolute path of whatever is selected right now: a file,
+    # a directory, or the focused entry of the staging area. `wl-copy` forks a
+    # daemon that owns the selection, so `leave_broot: false` is enough to keep
+    # broot usable; nothing needs to stay in the foreground.
+    # Bound to ctrl-y (the conventional "yank the path" key). It's also
+    # reachable by name, as `:copy_path` or via its `cp-path` shortcut.
+    #
+    # `switch_terminal: false` is what stops the FLASH. `leave_broot: false`
+    # only says broot keeps running; it does NOT stop broot from leaving the
+    # alternate screen around the external command, which is the default and
+    # makes the whole TUI blink out to the normal screen and back on every
+    # ctrl-y. `wl-copy` forks its daemon and returns in ~1ms, so there is
+    # nothing worth showing the user: keep broot on the alternate screen.
     {
 	invocation: "copy_path"
     	shortcut: "cp-path"
+        key: ctrl-y
     	execution: "wl-copy {file}"  # Use xclip -selection clipboard {file} for X11 or pbcopy for macOS
     	leave_broot: false
+        switch_terminal: false
     }
 
     # Example 1: launching `tail -n` on the selected file (leaving broot)
